@@ -202,7 +202,7 @@ class GeometricShapeReconstructor:
         mesh.remove_vertices_by_mask(vertices_to_remove)
 
         # Check if the mesh has any vertices or faces
-        if mesh.get_vertices().size == 0 or mesh.get_faces().size == 0:
+        if len(np.asarray(mesh.vertices)) == 0 or len(np.asarray(mesh.triangles)) == 0:
             raise RuntimeError("Poisson surface reconstruction failed.")
 
         return mesh
@@ -295,10 +295,10 @@ def main():
             )
 
             mesh = reconstructor.reconstruct_3d_model()
-            reconstructor.save_model(mesh,f'{shape}_model.ply')
+            reconstructor.save_mesh(mesh,f'{shape}_model.ply')
 
             # Visualize the reconstructed model
-            reconstructor.visualize_model(mesh)
+            reconstructor.visualize_mesh(mesh)
 
 
 if __name__ == "__main__":

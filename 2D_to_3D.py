@@ -83,7 +83,7 @@ class GeometricShapeReconstructor:
         return image
 
     def estimate_depth_advanced(self, image: np.ndarray) -> np.ndarray:
-        """Shape-specific depth estimation"""
+        """Shape-specific depth estimation with improved accuracy."""
         height, width = image.shape
         depth_map = np.zeros((height, width), dtype=np.float32)
 
@@ -105,12 +105,12 @@ class GeometricShapeReconstructor:
             for y in range(height):
                 for x in range(width):
                     distance = np.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
-                    depth_map[y,x] = max(0, 255 - (255 / center_x) * distance)
+                    depth_map[y,x] = max(0, 255 - (255 / max(1,center_x)) * distance) #Avoid division by zero
 
         elif strategy == 'curved':
             center_x = width // 2
             for x in range(width):
-                depth_map[:, x] = max(0, 255 - (255 / center_x) * abs(x - center_x))
+                depth_map[:, x] = max(0, 255 - (255 / max(1,center_x)) * abs(x - center_x)) #Avoid division by zero
 
         return depth_map.astype(np.uint8)
 
@@ -289,9 +289,9 @@ def main():
 
             # Modify paths as needed to your local images
             reconstructor.load_views(
-                f'/content/front.jpg',
-                f'/content/side.jpg',
-                f'/content/top.jpg'
+                f'cylinder_front.jpg',
+                f'cylinder_side.jpg',
+                f'cylinder_top.jpg'
             )
 
             mesh = reconstructor.reconstruct_3d_model()
